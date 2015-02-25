@@ -104,7 +104,7 @@ class Action(models.Model):
     public = models.BooleanField(default=True, db_index=True)
 
     # Added for CircleUp to show whether it is visible to everyone or just accredited investors.
-    visibility = models.IntegerField(choices=Action.VISIBILITY_CHOICES, default=Action.VISIBILITY_LIMITED)
+    visibility = models.IntegerField(choices=VISIBILITY_CHOICES, default=VISIBILITY_LIMITED)
 
     objects = actstream_settings.get_action_manager()
 

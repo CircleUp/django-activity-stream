@@ -73,6 +73,12 @@ class Action(models.Model):
         <a href="http://oebfare.com/">brosner</a> commented on <a href="http://github.com/pinax/pinax">pinax/pinax</a> 2 hours ago
 
     """
+    # Added by CircleUp.  Keep track of which items are visible to everyone,
+    #  and which items are only visible to accredited investors.
+    VISIBILITY_ALL = 0
+    VISIBILITY_LIMITED = 1
+    VISIBILITY_CHOICES = ((VISIBILITY_ALL, 'All'), (VISIBILITY_LIMITED, 'Limited'))
+
     actor_content_type = models.ForeignKey(ContentType, related_name='actor',
                                            db_index=True)
     actor_object_id = models.CharField(max_length=255, db_index=True)
@@ -96,6 +102,9 @@ class Action(models.Model):
     timestamp = models.DateTimeField(default=now, db_index=True)
 
     public = models.BooleanField(default=True, db_index=True)
+
+    # Added for CircleUp to show whether it is visible to everyone or just accredited investors.
+    visibility = models.IntegerField(choices=Action.VISIBILITY_CHOICES, default=Action.VISIBILITY_LIMITED)
 
     objects = actstream_settings.get_action_manager()
 

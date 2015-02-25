@@ -101,7 +101,8 @@ def action_handler(verb, **kwargs):
         verb=text_type(verb),
         public=bool(kwargs.pop('public', True)),
         description=kwargs.pop('description', None),
-        timestamp=kwargs.pop('timestamp', now())
+        timestamp=kwargs.pop('timestamp', now()),
+        visibility=kwargs.pop('visibility', None),
     )
 
     for opt in ('target', 'action_object'):
@@ -111,6 +112,7 @@ def action_handler(verb, **kwargs):
             setattr(newaction, '%s_object_id' % opt, obj.pk)
             setattr(newaction, '%s_content_type' % opt,
                     ContentType.objects.get_for_model(obj))
+
     if settings.USE_JSONFIELD and len(kwargs):
         newaction.data = kwargs
     newaction.save(force_insert=True)

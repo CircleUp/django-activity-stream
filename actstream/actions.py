@@ -102,8 +102,10 @@ def action_handler(verb, **kwargs):
         public=bool(kwargs.pop('public', True)),
         description=kwargs.pop('description', None),
         timestamp=kwargs.pop('timestamp', now()),
-        visibility=kwargs.pop('visibility', None),
     )
+
+    if 'visibility' in kwargs:
+        setattr(newaction, 'visibility', kwargs['visibility'])
 
     for opt in ('target', 'action_object'):
         obj = kwargs.pop(opt, None)

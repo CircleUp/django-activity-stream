@@ -77,7 +77,8 @@ class Action(models.Model):
     #  and which items are only visible to accredited investors.
     VISIBILITY_ALL = 0
     VISIBILITY_LIMITED = 1
-    VISIBILITY_CHOICES = ((VISIBILITY_ALL, 'All'), (VISIBILITY_LIMITED, 'Limited'))
+    VISIBILITY_PUBLIC_ONLY = 2
+    VISIBILITY_CHOICES = ((VISIBILITY_ALL, 'All'), (VISIBILITY_LIMITED, 'Limited'), (VISIBILITY_PUBLIC_ONLY, 'Public only'))
 
     actor_content_type = models.ForeignKey(ContentType, related_name='actor',
                                            db_index=True)

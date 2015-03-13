@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from django.db import models, migrations
 import django.utils.timezone
 from django.conf import settings
+import jsonfield.fields
 
 
 class Migration(migrations.Migration):
@@ -28,6 +29,7 @@ class Migration(migrations.Migration):
                 ('action_object_content_type', models.ForeignKey(related_name='action_object', blank=True, to='contenttypes.ContentType', null=True)),
                 ('actor_content_type', models.ForeignKey(related_name='actor', to='contenttypes.ContentType')),
                 ('target_content_type', models.ForeignKey(related_name='target', blank=True, to='contenttypes.ContentType', null=True)),
+                ('data', jsonfield.fields.JSONField(null=True, blank=True)),
             ],
             options={
                 'ordering': ('-timestamp',),

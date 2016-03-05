@@ -42,6 +42,13 @@ class Follow(models.Model):
     def __str__(self):
         return '%s -> %s' % (self.user, self.follow_object)
 
+    def may_view(self, viewer):
+        from main.models import Company, UserProfile
+        if viewer.may('ViewOnlineActivities', self.user.userprofile):
+            if isinstance(self.follow_object, UserProfile):
+                return viewer.may('ViewOnlineActivities', self.follow_object)
+            elif isinstance(self.follow_object, Company):
+                return viewer.may('ViewFullCompanyListing', self.follow_object)
 
 @python_2_unicode_compatible
 class Action(models.Model):
@@ -160,6 +167,11 @@ class Action(models.Model):
     def get_absolute_url(self):
         return 'actstream.views.detail', [self.pk]
 
+    def may_view(self, viewer):
+        from main.models import Company
+        if viewer.may('ViewOnlineActivities', self.actor):
+            if isinstance(self.target, Company):
+                return viewer.may('ViewFullCompanyListing', self.target)
 
 # convenient accessors
 actor_stream = Action.objects.actor

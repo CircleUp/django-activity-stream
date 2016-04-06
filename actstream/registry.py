@@ -3,13 +3,12 @@ import re
 
 import django
 from django.conf import settings
-from django.db.models import get_model
 from django.db.models.base import ModelBase
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.six import string_types
 
 
-from actstream.compat import generic
+from actstream.compat import generic, get_model
 
 
 class RegistrationError(Exception):
@@ -41,7 +40,7 @@ def setup_generic_relations(model_class):
             related_attr_name: attr_value
         }
         rel = generic.GenericRelation('actstream.Action', **kwargs)
-        rel = rel.contribute_to_class(model_class, attr)
+        rel.contribute_to_class(model_class, attr)
         relations[field] = rel
 
         # @@@ I'm not entirely sure why this works
@@ -64,6 +63,8 @@ def is_installed(model_class):
     """
     if django.VERSION[:2] >= (1, 7):
         return model_class._meta.installed
+    if model_class._meta.app_label in settings.INSTALLED_APPS:
+        return True
     return re.sub(r'\.models.*$', '', model_class.__module__) in settings.INSTALLED_APPS
 
 

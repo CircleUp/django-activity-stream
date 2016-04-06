@@ -1,5 +1,5 @@
 # -*- coding: utf-8  -*-
-
+import django
 from django.contrib.auth.models import Group
 
 from django.utils.translation import ugettext_lazy as _
@@ -11,7 +11,7 @@ from actstream.models import (Action, Follow, model_stream, user_stream,
                               actor_stream, following, followers)
 from actstream.actions import follow, unfollow
 from actstream.signals import action
-from .base import DataTestCase, render
+from actstream.tests.base import DataTestCase, render
 
 
 class ActivityTestCase(DataTestCase):
@@ -196,17 +196,6 @@ class ActivityTestCase(DataTestCase):
         self.assertEqual(render(src, user=self.user2, group=self.group), 'yup')
         self.assertEqual(render(src, user=self.user1, group=self.group), '')
 
-    def test_store_untranslated_string(self):
-        lang = get_language()
-        activate("fr")
-        verb = _('English')
-
-        self.assertEqual(verb, "Anglais")
-        action.send(self.user1, verb=verb, action_object=self.comment,
-                    target=self.group, timestamp=self.testdate)
-        self.assertTrue(Action.objects.filter(verb='English').exists())
-        activate(lang)
-
     def test_none_returns_an_empty_queryset(self):
         qs = Action.objects.none()
         self.assertFalse(qs.exists())
@@ -216,3 +205,15 @@ class ActivityTestCase(DataTestCase):
         self.assertNotIn(self.join_action, list(user_stream(self.user1)))
         self.assertIn(self.join_action,
                       list(user_stream(self.user1, with_user_activity=True)))
+
+    if django.VERSION[:2] > (1, 4):
+        def test_store_untranslated_string(self):
+            lang = get_language()
+            activate('fr')
+            verb = _('English')
+
+            self.assertEqual(verb, 'Anglais')
+            action.send(self.user1, verb=verb, action_object=self.comment,
+                        target=self.group, timestamp=self.testdate)
+            self.assertTrue(Action.objects.filter(verb='English').exists())
+            activate(lang)
